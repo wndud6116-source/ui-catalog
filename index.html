@@ -99,13 +99,16 @@
 
     /* ===== CUSTOM MODE ===== */
     .custom-layout{display:flex;height:calc(100vh - 0px);}
-    .custom-palette{width:260px;background:var(--surface);border-right:1px solid var(--border);padding:16px;overflow-y:auto;flex-shrink:0;}
+    .custom-palette{width:260px;background:var(--surface);border-right:1px solid var(--border);padding:16px 12px;overflow-y:auto;flex-shrink:0;}
     .palette-title{font-size:14px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
-    .palette-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:grab;background:var(--bg);transition:all .15s;}
+    .palette-cat-header{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;padding:6px 8px;background:var(--bg);border-radius:6px;}
+    .palette-cat-header:first-of-type{margin-top:0;}
+    .palette-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;margin-bottom:5px;cursor:grab;background:var(--surface);transition:all .15s;}
     .palette-item:hover{border-color:var(--blue);background:var(--blue-light);transform:translateX(2px);}
     .palette-item:active{cursor:grabbing;}
-    .palette-icon{width:36px;height:36px;border-radius:8px;background:var(--surface);border:1px solid var(--border);display:grid;place-items:center;font-size:18px;flex-shrink:0;}
-    .palette-name{font-size:14px;font-weight:700;} .palette-eng{font-size:11px;color:var(--light);}
+    .palette-icon{width:32px;height:32px;border-radius:8px;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;font-size:16px;flex-shrink:0;}
+    .palette-text{flex:1;min-width:0;}
+    .palette-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;} .palette-eng{font-size:10px;color:var(--light);}
 
     .custom-canvas-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
     .custom-canvas-toolbar{padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
@@ -118,17 +121,26 @@
     .canvas-info{font-size:13px;color:var(--muted);margin-left:auto;}
 
     .custom-canvas{flex:1;background:#f1f5f9;background-image:radial-gradient(circle,#e2e8f0 1px,transparent 1px);background-size:20px 20px;overflow:auto;position:relative;min-height:500px;}
-    .canvas-element{position:absolute;border:2px solid transparent;border-radius:8px;cursor:move;padding:8px 12px;display:flex;align-items:center;justify-content:center;min-width:80px;transition:border-color .15s,box-shadow .15s;}
+    .canvas-element{position:absolute;border:2px solid transparent;border-radius:8px;cursor:move;padding:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;overflow:hidden;transition:border-color .15s,box-shadow .15s;}
     .canvas-element:hover{border-color:var(--blue);}
     .canvas-element.selected{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,0.2);}
-    .canvas-element .resize-handle{position:absolute;width:12px;height:12px;background:var(--blue);border:2px solid #fff;border-radius:50%;cursor:nwse-resize;display:none;}
+    .canvas-element .canvas-el-preview{pointer-events:none;width:100%;display:flex;align-items:center;justify-content:center;flex:1;overflow:hidden;}
+    .canvas-element .canvas-el-label{pointer-events:none;font-size:11px;font-weight:700;color:var(--muted);margin-top:4px;padding:2px 8px;background:var(--bg);border-radius:4px;text-align:center;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;}
+    .canvas-element .resize-handle{position:absolute;width:12px;height:12px;background:var(--blue);border:2px solid #fff;border-radius:50%;cursor:nwse-resize;display:none;z-index:10;}
     .canvas-element.selected .resize-handle{display:block;}
     .resize-handle{bottom:-6px;right:-6px;}
+    .canvas-welcome{text-align:center;color:var(--light);font-size:16px;padding:60px 20px;pointer-events:none;user-select:none;}
+    .canvas-welcome .welcome-icon{font-size:48px;margin-bottom:12px;opacity:0.4;}
+    .canvas-welcome .welcome-text{font-size:18px;font-weight:700;color:var(--muted);}
+    .canvas-welcome .welcome-sub{font-size:14px;color:var(--light);margin-top:6px;}
 
     /* Properties panel */
     .custom-props{width:300px;background:var(--surface);border-left:1px solid var(--border);padding:16px;overflow-y:auto;flex-shrink:0;}
     .props-title{font-size:14px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
-    .props-empty{text-align:center;padding:40px 20px;color:var(--light);font-size:14px;}
+    .props-empty{text-align:center;padding:40px 16px;color:var(--light);font-size:14px;line-height:1.6;}
+    .props-empty .props-empty-icon{font-size:40px;margin-bottom:12px;opacity:0.5;}
+    .props-empty .props-empty-text{font-size:15px;font-weight:700;color:var(--muted);margin-bottom:6px;}
+    .props-empty .props-empty-sub{font-size:13px;color:var(--light);}
     .prop-group{margin-bottom:16px;} .prop-label{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;display:block;}
     .prop-input{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;outline:none;}
     .prop-input:focus{border-color:var(--blue);}
@@ -226,7 +238,11 @@
       <!-- Properties -->
       <div class="custom-props" id="props-panel">
         <div class="props-title">속성 패널</div>
-        <div class="props-empty" id="props-empty">🎨 캔버스에 요소를 드래그하여 배치하세요<br><br>또는 요소를 클릭하여 속성을 편집하세요</div>
+        <div class="props-empty" id="props-empty">
+          <div class="props-empty-icon">🎨</div>
+          <div class="props-empty-text">요소를 선택하세요</div>
+          <div class="props-empty-sub">캔버스에 요소를 드래그하여 배치한 후,<br>클릭하면 속성을 편집할 수 있습니다</div>
+        </div>
         <div id="props-content" style="display:none;"></div>
       </div>
     </div>
@@ -360,13 +376,22 @@ const sizePresets=[{l:'작게',v:'small'},{l:'보통',v:'medium'},{l:'크게',v:
 const stylePresets=[{l:'기본',v:'default'},{l:'둥글게',v:'rounded'},{l:'모서리 직각',v:'sharp'},{l:'그림자',v:'shadow'},{l:'테두리',v:'bordered'}];
 const alignPresets=[{l:'왼쪽',v:'left'},{l:'가운데',v:'center'},{l:'오른쪽',v:'right'}];
 
+const catIcons={input:'⌨️',display:'📊',nav:'🧭',feedback:'🔔'};
+const catOrder=['input','display','nav','feedback'];
+
 function renderPalette(){
-  paletteList.innerHTML=uiElements.map(el=>`
-    <div class="palette-item" draggable="true" ondragstart="dragStart(event,${el.id})">
-      <div class="palette-icon">${el.preview.substring(0,50)}</div>
-      <div><div class="palette-name">${el.name}</div><div class="palette-eng">${el.eng}</div></div>
-    </div>
-  `).join('');
+  let html='';
+  catOrder.forEach(cat=>{
+    html+=`<div class="palette-cat-header">${catIcons[cat]} ${catLabels[cat]}</div>`;
+    const items=uiElements.filter(el=>el.cat===cat);
+    items.forEach(el=>{
+      html+=`<div class="palette-item" draggable="true" ondragstart="dragStart(event,${el.id})" title="${el.desc}">
+        <div class="palette-icon">${catIcons[el.cat]}</div>
+        <div class="palette-text"><div class="palette-name">${el.name}</div><div class="palette-eng">${el.eng}</div></div>
+      </div>`;
+    });
+  });
+  paletteList.innerHTML=html;
 }
 
 function dragStart(event,id){
@@ -393,10 +418,10 @@ function addCanvasElement(el,x,y){
     eng:el.eng,
     html:el.html,
     preview:el.preview,
-    x:Math.max(0,x-40),
-    y:Math.max(0,y-20),
-    width:200,
-    height:60,
+    x:Math.max(0,x-50),
+    y:Math.max(0,y-30),
+    width:220,
+    height:100,
     color:'#3b82f6',
     size:'medium',
     style:'default',
@@ -410,28 +435,36 @@ function addCanvasElement(el,x,y){
 }
 
 function renderCanvas(){
+  if(canvasElements.length===0){
+    canvas.innerHTML='<div class="canvas-welcome"><div class="welcome-icon">🎨</div><div class="welcome-text">좌측에서 UI 요소를 드래그하여 배치하세요</div><div class="welcome-sub">40가지 UI 요소로 화면을 구성할 수 있습니다</div></div>';
+    canvasInfo.textContent='요소 0개 · 클릭하여 선택';
+    return;
+  }
   canvas.innerHTML=canvasElements.map(el=>{
     const styles=[];
-    styles.push(`left:${el.x}px;top:${el.y}px;width:${el.width}px;min-height:${el.height}px`);
-    // Size
-    const sizeMap={small:'12px',medium:'15px',large:'18px'};
-    styles.push(`font-size:${sizeMap[el.size]||'15px'}`);
-    // Style
+    styles.push(`left:${el.x}px;top:${el.y}px;width:${el.width}px;height:${el.height}px`);
+    // Font size by size setting
+    const sizeMap={small:'12px',medium:'14px',large:'16px'};
+    styles.push(`font-size:${sizeMap[el.size]||'14px'}`);
+    // Border radius by style
     if(el.style==='rounded')styles.push('border-radius:16px');
     else if(el.style==='sharp')styles.push('border-radius:0');
     else styles.push('border-radius:8px');
-    if(el.style==='shadow')styles.push('box-shadow:0 4px 12px rgba(0,0,0,0.1)');
+    if(el.style==='shadow')styles.push('box-shadow:0 4px 12px rgba(0,0,0,0.12)');
     if(el.style==='bordered')styles.push('border:2px solid '+el.color);
-    // Align
-    styles.push('justify-content:'+el.align==='left'?'flex-start':el.align==='right'?'flex-end':'center');
-    styles.push('text-align:'+el.align);
-    // Color (for background elements)
-    if(el.typeId===9||el.typeId===27){ // Button, FAB
-      styles.push('background:'+el.color);styles.push('color:#fff');
+    // Background for button-like elements
+    if(el.typeId===9||el.typeId===27||el.typeId===26){
+      styles.push('background:'+el.color);
     }
+    // Alignment for inner content
+    const alignMap={left:'flex-start',center:'center',right:'flex-end'};
+    styles.push('align-items:'+alignMap[el.align]||'center');
+
+    const previewContent=el.customText?`<div style="font-size:${sizeMap[el.size]||'14px'};font-weight:700;color:${(el.typeId===9||el.typeId===27||el.typeId===26)?'#fff':el.color};">${el.customText}</div>`:el.preview;
 
     return `<div class="canvas-element ${selectedEl===el.id?'selected':''}" style="${styles.join(';')}" onclick="selectElement(${el.id},event)" onmousedown="startDrag(event,${el.id})">
-      <div style="pointer-events:none;${el.typeId===9||el.typeId===27?'color:#fff;':''}">${el.customText||el.preview}</div>
+      <div class="canvas-el-preview">${previewContent}</div>
+      <div class="canvas-el-label">${el.label}</div>
       <div class="resize-handle" onmousedown="startResize(event,${el.id})"></div>
     </div>`;
   }).join('');
@@ -636,6 +669,7 @@ function copyGeneratedPrompt(){
 
 // Init
 renderGrid();
+renderCanvas(); // Initialize canvas with welcome state
 </script>
 </body>
 </html>
