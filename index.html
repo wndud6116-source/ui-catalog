@@ -153,6 +153,30 @@
     .prop-range{flex:1;}
     .prop-range-val{font-size:13px;font-weight:700;min-width:36px;text-align:right;}
 
+    /* Element-specific properties */
+    .props-divider{height:1px;background:var(--border);margin:20px 0 12px;}
+    .props-section-title{font-size:13px;font-weight:900;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+    .props-section-title .ico{font-size:16px;}
+    .prop-option-row{display:flex;gap:6px;margin-bottom:6px;align-items:center;}
+    .prop-option-row input{flex:1;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;outline:none;}
+    .prop-option-row input:focus{border-color:var(--blue);}
+    .prop-option-row select{padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:#fff;}
+    .prop-option-remove{width:26px;height:26px;border:none;border-radius:6px;background:var(--red-light);color:var(--red);font-size:15px;font-weight:700;cursor:pointer;display:grid;place-items:center;flex-shrink:0;}
+    .prop-option-remove:hover{background:var(--red);color:#fff;}
+    .prop-option-add{padding:6px 12px;border:1px dashed var(--blue);border-radius:8px;font-size:12px;font-weight:700;color:var(--blue);background:var(--blue-light);cursor:pointer;width:100%;margin-top:4px;}
+    .prop-option-add:hover{background:var(--blue);color:#fff;}
+    .prop-inline-row{display:flex;gap:8px;align-items:center;}
+    .prop-inline-row .prop-input{flex:1;}
+    .prop-inline-row select{padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:#fff;}
+    .prop-color-choice{display:flex;gap:6px;flex-wrap:wrap;}
+    .prop-color-choice-btn{padding:4px 12px;border:2px solid var(--border);border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;background:#fff;transition:all .15s;}
+    .prop-color-choice-btn:hover{border-color:var(--blue);}
+    .prop-color-choice-btn.active{border-color:var(--text);font-weight:900;}
+    .prop-bool-row{display:flex;gap:6px;}
+    .prop-bool-btn{flex:1;padding:7px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;text-align:center;transition:all .15s;}
+    .prop-bool-btn:hover{border-color:var(--blue);}
+    .prop-bool-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+
     /* Prompt output modal */
     .prompt-modal{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.7);backdrop-filter:blur(4px);z-index:300;align-items:center;justify-content:center;padding:24px;}
     .prompt-modal.show{display:flex;}
@@ -379,6 +403,60 @@ const alignPresets=[{l:'왼쪽',v:'left'},{l:'가운데',v:'center'},{l:'오른�
 const catIcons={input:'⌨️',display:'📊',nav:'🧭',feedback:'🔔'};
 const catOrder=['input','display','nav','feedback'];
 
+// ===== ELEMENT-SPECIFIC DEFAULTS =====
+// Maps typeId → default element-specific properties
+function getElementDefaults(typeId){
+  const d={
+    1:{labelText:'완료됨',checkedDefault:'yes'},
+    2:{placeholder:'할 일 입력...',defaultValue:''},
+    3:{placeholder:'여러 줄 입력...',rows:4},
+    4:{options:['옵션 1','옵션 2','옵션 3'],selectedIndex:1},
+    5:{optionCount:3,optionTexts:['A','B','C'],selectedOption:0},
+    6:{onLabel:'ON',offLabel:'OFF',defaultState:'on'},
+    7:{minVal:0,maxVal:100,currentVal:50},
+    8:{placeholder:'검색어 입력'},
+    9:{buttonCount:2,buttonTexts:['저장','취소'],buttonStyles:['primary','secondary']},
+    10:{labelText:'날짜 선택'},
+    11:{itemCount:3,itemTexts:['할 일 1','할 일 2','할 일 3']},
+    12:{columns:3,itemCount:6},
+    13:{headers:'이름,상태',rowCount:2,cellData:'공부,완료\n운동,진행중'},
+    14:{cardTitle:'제목',cardDesc:'내용 요약',imageColor:'#3b82f6'},
+    15:{tabCount:3,tabNames:['전체','진행중','완료'],activeTab:0},
+    16:{modalTitle:'삭제할까요?',modalDesc:'되돌릴 수 없습니다.',buttonText:'확인'},
+    17:{message:'저장되었습니다',toastType:'success'},
+    18:{badgeText:'진행중',badgeColor:'blue'},
+    19:{currentPage:2,totalPages:5},
+    20:{itemCount:3,itemTitles:['첫 번째','두 번째','세 번째'],expandedDefault:'first'},
+    21:{defaultColor:'#3b82f6'},
+    22:{instruction:'파일을 드래그하거나 클릭'},
+    23:{minVal:0,maxVal:99,currentVal:3,step:1},
+    24:{placeholder:'비밀번호 입력',showToggle:'yes'},
+    25:{totalSteps:3,currentStep:2},
+    26:{buttonCount:3,buttonTexts:['주간','월간','연간'],activeIndex:0},
+    27:{icon:'+'},
+    28:{maxStars:5,currentRating:4},
+    29:{digits:6},
+    30:{placeholder:'내용을 입력하세요...'},
+    31:{progress:65},
+    32:{targetText:'여기에 마우스',tooltipText:'도움말'},
+    33:{menuCount:3,menuNames:['홈','통계','설정'],activeIndex:0},
+    34:{logoText:'로고',menuCount:3,menuNames:['홈','소개','연락처']},
+    35:{pathItems:'홈, 설정, 프로필'},
+    36:{initial:'홍',name:'홍길동',role:'관리자'},
+    37:{peopleCount:3,showCount:'yes'},
+    38:{slideCount:3},
+    39:{eventCount:2,eventTitles:['주문 완료','배송 시작'],eventDates:['07/06 10:00','07/06 14:00']},
+    40:{icon:'📭',titleText:'데이터 없음',descText:'항목을 추가하세요',buttonText:'+ 추가'},
+  };
+  // Deep copy to avoid shared references
+  const r={};
+  const src=d[typeId]||{};
+  Object.keys(src).forEach(k=>{
+    r[k]=Array.isArray(src[k])?[...src[k]]:src[k];
+  });
+  return r;
+}
+
 function renderPalette(){
   let html='';
   catOrder.forEach(cat=>{
@@ -428,10 +506,158 @@ function addCanvasElement(el,x,y){
     align:'center',
     label:el.name,
     customText:'',
+    ep:getElementDefaults(el.id), // element-specific props
   };
   canvasElements.push(elem);
   renderCanvas();
   selectElement(elem.id);
+}
+
+function renderElementPreview(el,sizeMap){
+  // If customText is set, show that (legacy behavior for button-like)
+  if(el.customText){
+    const isBtn=el.typeId===9||el.typeId===27||el.typeId===26;
+    return `<div style="font-size:${sizeMap[el.size]||'14px'};font-weight:700;color:${isBtn?'#fff':el.color};">${el.customText}</div>`;
+  }
+  // If no element-specific props, fall back to default preview
+  if(!el.ep)return el.preview;
+  const p=el.ep;
+  const c=el.color;
+  const fs=sizeMap[el.size]||'14px';
+  switch(el.typeId){
+    case 1: // Checkbox
+      return `<div style="display:flex;gap:8px;align-items:center;font-size:${fs};"><input type="checkbox" ${p.checkedDefault==='yes'?'checked':''} style="width:20px;height:20px;accent-color:${c};"> ${p.labelText}</div>`;
+    case 2: // Text Input
+      return `<input type="text" placeholder="${p.placeholder}" value="${p.defaultValue}" style="width:100%;padding:10px 14px;font-size:${fs};border:2px solid #e2e8f0;border-radius:10px;outline:none;">`;
+    case 3: // Textarea
+      return `<textarea style="width:100%;padding:10px 14px;font-size:${fs};border:2px solid #e2e8f0;border-radius:10px;resize:none;height:${p.rows*20}px;" placeholder="${p.placeholder}"></textarea>`;
+    case 4: // Dropdown
+      return `<select style="width:100%;padding:10px 14px;font-size:${fs};border:2px solid #e2e8f0;border-radius:10px;background:#fff;">${p.options.map((o,i)=>`<option ${i===p.selectedIndex?'selected':''}>${o}</option>`).join('')}</select>`;
+    case 5: // Radio Button
+      return `<div style="display:flex;gap:14px;font-size:${fs};flex-wrap:wrap;">${p.optionTexts.map((t,i)=>`<label style="display:flex;gap:5px;align-items:center;"><input type="radio" name="r${el.id}" ${i===p.selectedOption?'checked':''} style="width:18px;height:18px;accent-color:${c};"> ${t}</label>`).join('')}</div>`;
+    case 6: // Toggle Switch
+      return `<div style="display:flex;align-items:center;gap:10px;font-size:${fs};"><span style="color:${p.defaultState==='on'?c:'#94a3b8'};font-weight:700;">${p.defaultState==='on'?p.onLabel:p.offLabel}</span><div style="position:relative;width:52px;height:28px;background:${p.defaultState==='on'?c:'#e2e8f0'};border-radius:999px;"><div style="position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:3px;${p.defaultState==='on'?'right:3px':'left:3px'};box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div></div></div>`;
+    case 7: // Slider
+      return `<div style="width:100%;"><div style="font-size:${fs};font-weight:700;color:${c};margin-bottom:8px;">값: ${p.currentVal}</div><input type="range" min="${p.minVal}" max="${p.maxVal}" value="${p.currentVal}" style="width:100%;height:6px;-webkit-appearance:none;appearance:none;background:#e2e8f0;border-radius:999px;outline:none;"></div>`;
+    case 8: // Search Bar
+      return `<div style="width:100%;display:flex;align-items:center;gap:8px;padding:10px 14px;background:#f8fafc;border-radius:999px;border:2px solid #e2e8f0;"><span>🔍</span><input type="text" placeholder="${p.placeholder}" style="flex:1;border:none;background:none;outline:none;font-size:${fs};"></div>`;
+    case 9: { // Button
+      const styleMap9={primary:{bg:c,color:'#fff'},secondary:{bg:'#e2e8f0',color:'#1f2937'},danger:{bg:'#f43f5e',color:'#fff'}};
+      return `<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">${p.buttonTexts.map((t,i)=>{const s=styleMap9[p.buttonStyles[i]||'primary']||styleMap9.primary;return `<button style="padding:10px 18px;font-size:${fs};font-weight:700;border:none;border-radius:10px;cursor:pointer;background:${s.bg};color:${s.color};">${t}</button>`;}).join('')}</div>`;
+    }
+    case 10: // Date Picker
+      return `<div style="width:100%;"><div style="font-size:13px;color:#64748b;margin-bottom:6px;">${p.labelText}</div><input type="date" style="width:100%;padding:10px 14px;font-size:${fs};border:2px solid #e2e8f0;border-radius:10px;"></div>`;
+    case 11: // List View
+      return `<div style="width:100%;">${p.itemTexts.map((t,i)=>`<div style="padding:10px 14px;${i<p.itemTexts.length-1?'border-bottom:1px solid #e2e8f0;':''}font-size:${fs};display:flex;align-items:center;gap:10px;"><span style="width:10px;height:10px;border-radius:50%;background:${c};flex-shrink:0;"></span> ${t}</div>`).join('')}</div>`;
+    case 12: { // Grid View
+      const cols=p.columns;
+      const items=Array.from({length:p.itemCount},(_,i)=>String.fromCharCode(65+i));
+      return `<div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:8px;width:100%;">${items.map((t,i)=>{const grad=['linear-gradient(135deg,#3b82f6,#60a5fa)','linear-gradient(135deg,#10b981,#34d399)','linear-gradient(135deg,#f59e0b,#fbbf24)','linear-gradient(135deg,#8b5cf6,#a78bfa)'];return `<div style="aspect-ratio:1;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:14px;font-weight:700;background:${grad[i%4]};">${t}</div>`;}).join('')}</div>`;
+    }
+    case 13: { // Table
+      const headers=p.headers.split(',').map(s=>s.trim());
+      const rows=p.cellData.split('\n').filter(r=>r.trim()).map(r=>r.split(',').map(s=>s.trim()));
+      return `<table style="width:100%;font-size:${fs};border-collapse:collapse;"><tr>${headers.map(h=>`<th style="background:#f8fafc;padding:8px 12px;text-align:left;font-weight:700;border-bottom:2px solid #e2e8f0;">${h}</th>`).join('')}</tr>${rows.map(r=>`<tr>${headers.map((_,ci)=>`<td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">${r[ci]||''}</td>`).join('')}</tr>`).join('')}</table>`;
+    }
+    case 14: // Card
+      return `<div style="width:100%;background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;"><div style="height:56px;background:${p.imageColor};"></div><div style="padding:10px 12px;"><div style="font-size:${fs};font-weight:700;">${p.cardTitle}</div><div style="font-size:13px;color:#64748b;margin-top:2px;">${p.cardDesc}</div></div></div>`;
+    case 15: { // Tabs
+      return `<div style="width:100%;"><div style="display:flex;border-bottom:2px solid #e2e8f0;">${p.tabNames.map((n,i)=>`<div style="padding:8px 16px;font-size:${fs};font-weight:700;${i===p.activeTab?`color:${c};border-bottom:2px solid ${c};margin-bottom:-2px;`:'color:#64748b;'}">${n}</div>`).join('')}</div><div style="padding:12px;font-size:${fs};">${p.tabNames[p.activeTab]||''} 내용</div></div>`;
+    }
+    case 16: // Modal
+      return `<div style="background:rgba(0,0,0,0.1);border-radius:8px;padding:20px;display:grid;place-items:center;"><div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,0.15);"><div style="font-size:${fs};font-weight:700;margin-bottom:4px;">${p.modalTitle}</div><div style="font-size:13px;color:#64748b;margin-bottom:10px;">${p.modalDesc}</div><button style="padding:6px 14px;font-size:14px;font-weight:700;background:${c};color:#fff;border:none;border-radius:8px;">${p.buttonText}</button></div></div>`;
+    case 17: { // Toast
+      const toastColors={success:'#10b981',error:'#f43f5e',info:'#3b82f6'};
+      const toastIcons={success:'✓',error:'✗',info:'ℹ'};
+      return `<div style="padding:10px 16px;border-radius:10px;font-size:${fs};font-weight:600;color:#fff;background:${toastColors[p.toastType]||'#10b981'};">${toastIcons[p.toastType]||'✓'} ${p.message}</div>`;
+    }
+    case 18: { // Badge
+      const badgeColors={blue:['#eff6ff','#2563eb'],green:['#ecfdf5','#059669'],red:['#fef2f2','#e11d48'],yellow:['#fffbeb','#d97706'],purple:['#f5f3ff','#7c3aed']};
+      const bc=badgeColors[p.badgeColor]||badgeColors.blue;
+      return `<span style="padding:5px 12px;border-radius:999px;font-size:13px;font-weight:700;background:${bc[0]};color:${bc[1]};">${p.badgeText}</span>`;
+    }
+    case 19: { // Pagination
+      return `<div style="display:flex;gap:6px;align-items:center;"><div style="width:36px;height:36px;border-radius:10px;border:1px solid #e2e8f0;background:#fff;display:grid;place-items:center;font-size:${fs};font-weight:700;">‹</div><div style="width:36px;height:36px;border-radius:10px;background:${c};color:#fff;display:grid;place-items:center;font-size:${fs};font-weight:700;">${p.currentPage}</div><div style="width:36px;height:36px;border-radius:10px;border:1px solid #e2e8f0;background:#fff;display:grid;place-items:center;font-size:${fs};font-weight:700;">›</div><span style="font-size:13px;color:#64748b;margin-left:4px;">/ ${p.totalPages}</span></div>`;
+    }
+    case 20: { // Accordion
+      return `<div style="width:100%;">${p.itemTitles.map((t,i)=>`<div style="border:1px solid #e2e8f0;border-radius:10px;margin-bottom:6px;overflow:hidden;"><div style="padding:10px 14px;font-size:${fs};font-weight:700;background:#f8fafc;display:flex;justify-content:space-between;">${t}<span>${p.expandedDefault==='all'||(p.expandedDefault==='first'&&i===0)?'▼':'▶'}</span></div>${p.expandedDefault==='all'||(p.expandedDefault==='first'&&i===0)?'<div style="padding:10px 14px;font-size:14px;color:#64748b;">펼쳐진 내용</div>':''}</div>`).join('')}</div>`;
+    }
+    case 21: // Color Picker
+      return `<div style="display:flex;gap:8px;align-items:center;"><div style="width:36px;height:36px;border-radius:10px;border:2px solid #e2e8f0;background:${p.defaultColor};"></div><span style="font-size:${fs};font-weight:700;">${p.defaultColor.toUpperCase()}</span></div>`;
+    case 22: // File Upload
+      return `<div style="width:100%;padding:16px;border:2px dashed #94a3b8;border-radius:12px;text-align:center;font-size:${fs};color:#64748b;background:#f8fafc;"><strong style="display:block;font-size:28px;margin-bottom:4px;">📁</strong>${p.instruction}</div>`;
+    case 23: // Number Input
+      return `<div style="display:flex;align-items:center;"><div style="width:40px;height:40px;border:2px solid #e2e8f0;background:#f8fafc;font-size:20px;font-weight:700;display:grid;place-items:center;border-radius:10px 0 0 10px;border-right:none;">−</div><div style="width:56px;height:40px;border:2px solid #e2e8f0;display:grid;place-items:center;font-size:${fs};font-weight:700;">${p.currentVal}</div><div style="width:40px;height:40px;border:2px solid #e2e8f0;background:#f8fafc;font-size:20px;font-weight:700;display:grid;place-items:center;border-radius:0 10px 10px 0;border-left:none;">+</div></div>`;
+    case 24: // Password Input
+      return `<div style="position:relative;width:100%;"><input type="password" placeholder="${p.placeholder}" style="width:100%;padding:10px ${p.showToggle==='yes'?'36px':'14px'} 10px 14px;font-size:${fs};border:2px solid #e2e8f0;border-radius:10px;">${p.showToggle==='yes'?'<span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:18px;">👁</span>':''}</div>`;
+    case 25: { // Stepper
+      let html='<div style="display:flex;align-items:center;gap:4px;">';
+      for(let i=1;i<=p.totalSteps;i++){
+        if(i>1)html+='<div style="width:24px;height:2px;background:#e2e8f0;"></div>';
+        if(i<p.currentStep)html+=`<div style="width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;background:#14b8a6;color:#fff;">✓</div>`;
+        else if(i===p.currentStep)html+=`<div style="width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;background:${c};color:#fff;">${i}</div>`;
+        else html+=`<div style="width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;background:#e2e8f0;color:#94a3b8;">${i}</div>`;
+      }
+      html+='</div>';
+      return html;
+    }
+    case 26: { // Button Group
+      return `<div style="display:flex;border-radius:10px;overflow:hidden;border:2px solid #e2e8f0;">${p.buttonTexts.map((t,i)=>`<div style="padding:8px 16px;font-size:${fs};font-weight:700;${i===p.activeIndex?`background:${c};color:#fff;`:'color:#64748b;background:#fff;'}${i>0?'border-left:1px solid #e2e8f0;':''}">${t}</div>`).join('')}</div>`;
+    }
+    case 27: // FAB
+      return `<div style="width:56px;height:56px;border-radius:50%;background:${c};color:#fff;font-size:28px;display:grid;place-items:center;box-shadow:0 6px 16px rgba(59,130,246,0.4);">${p.icon}</div>`;
+    case 28: { // Rating
+      let stars='';
+      for(let i=1;i<=p.maxStars;i++)stars+=`<span style="color:${i<=p.currentRating?'#f59e0b':'#e2e8f0'};">★</span>`;
+      return `<div style="text-align:center;"><div style="font-size:32px;">${stars}</div><div style="font-size:14px;font-weight:700;margin-top:6px;">${p.currentRating}.0 / ${p.maxStars}.0</div></div>`;
+    }
+    case 29: { // OTP Input
+      let html='<div style="display:flex;gap:6px;">';
+      for(let i=0;i<p.digits;i++)html+=`<input style="width:36px;height:44px;text-align:center;font-size:20px;font-weight:700;border:2px solid ${i===0?c:'#e2e8f0'};border-radius:10px;background:${i===0?'#eff6ff':'#fff'};" maxlength="1">`;
+      html+='</div>';
+      return html;
+    }
+    case 30: // Rich Text Editor
+      return `<div style="width:100%;"><div style="display:flex;gap:4px;padding:6px 8px;background:#f8fafc;border:2px solid #e2e8f0;border-bottom:none;border-radius:10px 10px 0 0;"><span style="padding:4px 10px;font-size:14px;font-weight:700;border:1px solid #e2e8f0;border-radius:6px;background:#eff6ff;color:#2563eb;">B</span><span style="padding:4px 10px;font-size:14px;font-weight:700;border:1px solid #e2e8f0;border-radius:6px;background:#fff;">I</span></div><div style="padding:10px;min-height:40px;font-size:${fs};border:2px solid #e2e8f0;border-radius:0 0 10px 10px;color:#94a3b8;">${p.placeholder}</div></div>`;
+    case 31: // Progress Bar
+      return `<div style="width:100%;"><div style="width:100%;height:14px;background:#e2e8f0;border-radius:999px;overflow:hidden;"><div style="height:100%;width:${p.progress}%;background:linear-gradient(90deg,${c},#60a5fa);border-radius:999px;"></div></div><div style="font-size:${fs};font-weight:700;text-align:center;margin-top:6px;">${p.progress}% 완료</div></div>`;
+    case 32: // Tooltip
+      return `<div style="position:relative;display:inline-block;"><div style="position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:8px;padding:8px 12px;background:#0f172a;color:#fff;font-size:13px;border-radius:8px;white-space:nowrap;">${p.tooltipText}</div><div style="padding:8px 16px;background:${c};color:#fff;border-radius:10px;font-size:${fs};font-weight:700;">${p.targetText}</div></div>`;
+    case 33: { // Sidebar
+      return `<div style="display:flex;width:100%;border-radius:10px;overflow:hidden;"><div style="width:90px;background:#0f172a;padding:8px;display:flex;flex-direction:column;gap:4px;">${p.menuNames.map((n,i)=>`<div style="padding:7px 8px;font-size:12px;font-weight:600;${i===p.activeIndex?`color:#fff;background:${c};border-radius:8px;`:'color:#94a3b8;'}">${n}</div>`).join('')}</div><div style="flex:1;padding:10px;font-size:14px;background:#f8fafc;">메인</div></div>`;
+    }
+    case 34: // Navbar
+      return `<div style="width:100%;"><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:#0f172a;border-radius:10px 10px 0 0;"><span style="font-size:15px;font-weight:900;color:#fff;">${p.logoText}</span><div>${p.menuNames.map((n,i)=>`<span style="font-size:13px;font-weight:600;${i===0?`color:#60a5fa;`:'color:#94a3b8;'}margin-left:12px;">${n}</span>`).join('')}</div></div><div style="padding:10px 14px;background:#f8fafc;border-radius:0 0 10px 10px;font-size:14px;">내용</div></div>`;
+    case 35: { // Breadcrumb
+      const items=p.pathItems.split(',').map(s=>s.trim());
+      return `<div style="display:flex;align-items:center;gap:6px;font-size:${fs};">${items.map((t,i)=>{const isLast=i===items.length-1;return `${i>0?'<span style="color:#e2e8f0;">›</span>':''}<span style="color:${isLast?'#1f2937':'#64748b'};font-weight:${isLast?'700':'600'};">${t}</span>`;}).join('')}</div>`;
+    }
+    case 36: // Avatar
+      return `<div style="display:flex;align-items:center;gap:10px;"><div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,${c},#60a5fa);color:#fff;display:grid;place-items:center;font-size:20px;font-weight:700;">${p.initial}</div><div><div style="font-size:${fs};font-weight:700;">${p.name}</div><div style="font-size:13px;color:#64748b;">${p.role}</div></div></div>`;
+    case 37: { // Avatar Group
+      const colors=['#3b82f6','#10b981','#f59e0b','#8b5cf6','#f43f5e','#14b8a6','#6366f1','#ec4899'];
+      let html='<div style="display:flex;">';
+      for(let i=0;i<p.peopleCount;i++)html+=`<div style="width:40px;height:40px;border-radius:50%;border:2px solid #fff;display:grid;place-items:center;font-size:14px;font-weight:700;color:#fff;background:${colors[i%8]};${i>0?'margin-left:-12px;':''}">${String.fromCharCode(65+i)}</div>`;
+      if(p.showCount==='yes')html+='<div style="width:40px;height:40px;border-radius:50%;border:2px solid #fff;display:grid;place-items:center;font-size:14px;font-weight:700;color:#1f2937;background:#e2e8f0;margin-left:-12px;">+5</div>';
+      html+='</div>';
+      return html;
+    }
+    case 38: { // Carousel
+      const grads=['linear-gradient(135deg,#3b82f6,#60a5fa)','linear-gradient(135deg,#10b981,#34d399)','linear-gradient(135deg,#f59e0b,#fbbf24)','linear-gradient(135deg,#8b5cf6,#a78bfa)','linear-gradient(135deg,#f43f5e,#fb7185)'];
+      let html='<div style="width:100%;"><div style="display:flex;gap:8px;">';
+      for(let i=0;i<p.slideCount;i++)html+=`<div style="flex:1;height:56px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:700;background:${grads[i%5]};">${i+1}</div>`;
+      html+='</div><div style="display:flex;gap:6px;justify-content:center;margin-top:8px;">';
+      for(let i=0;i<p.slideCount;i++)html+=`<div style="width:10px;height:10px;border-radius:50%;background:${i===0?c:'#e2e8f0'};"></div>`;
+      html+='</div></div>';
+      return html;
+    }
+    case 39: // Timeline
+      return `<div style="padding-left:20px;position:relative;"><div style="position:absolute;left:6px;top:0;bottom:0;width:2px;background:#e2e8f0;"></div>${p.eventTitles.map((t,i)=>`<div style="position:relative;padding-bottom:${i<p.eventTitles.length-1?'12px':'0'};"><div style="position:absolute;left:-20px;top:4px;width:14px;height:14px;border-radius:50%;background:${c};border:2px solid #fff;box-shadow:0 0 0 2px ${c};"></div><div style="font-size:${fs};font-weight:700;">${t}</div><div style="font-size:12px;color:#64748b;">${p.eventDates[i]||''}</div></div>`).join('')}</div>`;
+    case 40: // Empty State
+      return `<div style="text-align:center;padding:12px;"><div style="font-size:40px;margin-bottom:4px;">${p.icon}</div><div style="font-size:${fs};font-weight:700;">${p.titleText}</div><div style="font-size:14px;color:#64748b;margin-bottom:8px;">${p.descText}</div><button style="padding:6px 14px;font-size:14px;font-weight:700;background:${c};color:#fff;border:none;border-radius:8px;">${p.buttonText}</button></div>`;
+    default:
+      return el.preview;
+  }
 }
 
 function renderCanvas(){
@@ -460,7 +686,7 @@ function renderCanvas(){
     const alignMap={left:'flex-start',center:'center',right:'flex-end'};
     styles.push('align-items:'+alignMap[el.align]||'center');
 
-    const previewContent=el.customText?`<div style="font-size:${sizeMap[el.size]||'14px'};font-weight:700;color:${(el.typeId===9||el.typeId===27||el.typeId===26)?'#fff':el.color};">${el.customText}</div>`:el.preview;
+    const previewContent=renderElementPreview(el,sizeMap);
 
     return `<div class="canvas-element ${selectedEl===el.id?'selected':''}" style="${styles.join(';')}" onclick="selectElement(${el.id},event)" onmousedown="startDrag(event,${el.id})">
       <div class="canvas-el-preview">${previewContent}</div>
@@ -539,6 +765,7 @@ function renderProps(){
     <div class="prop-group">
       <label class="prop-label">위치 X: ${el.x}px / Y: ${el.y}px</label>
     </div>
+    ${renderElementSpecificProps(el)}
   `;
 }
 
@@ -548,6 +775,277 @@ function updateProp(key,val){
   el[key]=val;
   renderCanvas();
   if(key==='label'||key==='customText')renderProps();
+}
+
+// ===== ELEMENT-SPECIFIC PROPS UI =====
+function updateEP(key,val,extra){
+  const el=canvasElements.find(e=>e.id===selectedEl);
+  if(!el||!el.ep)return;
+  el.ep[key]=val;
+  // Handle array adjustments for count-based elements
+  if(extra==='adjustOptions'&&key==='optionCount'){
+    while(el.ep.optionTexts.length<val)el.ep.optionTexts.push('옵션 '+(el.ep.optionTexts.length+1));
+    if(el.ep.selectedOption>=val)el.ep.selectedOption=0;
+  }
+  if(extra==='adjustRadio'&&key==='optionCount'){
+    while(el.ep.optionTexts.length<val)el.ep.optionTexts.push(String.fromCharCode(65+el.ep.optionTexts.length));
+    if(el.ep.selectedOption>=val)el.ep.selectedOption=0;
+  }
+  if(extra==='adjustItems'&&key==='itemCount'){
+    while(el.ep.itemTexts.length<val)el.ep.itemTexts.push('항목 '+(el.ep.itemTexts.length+1));
+  }
+  if(extra==='adjustTitles'&&key==='itemCount'){
+    while(el.ep.itemTitles.length<val)el.ep.itemTitles.push((val)+'번째');
+  }
+  if(extra==='adjustEvents'&&key==='eventCount'){
+    while(el.ep.eventTitles.length<val)el.ep.eventTitles.push('이벤트 '+(el.ep.eventTitles.length+1));
+    while(el.ep.eventDates.length<val)el.ep.eventDates.push('');
+  }
+  if(extra==='adjustTabs'&&key==='tabCount'){
+    while(el.ep.tabNames.length<val)el.ep.tabNames.push('탭 '+(el.ep.tabNames.length+1));
+    if(el.ep.activeTab>=val)el.ep.activeTab=0;
+  }
+  if(extra==='adjustMenu'&&key==='menuCount'){
+    while(el.ep.menuNames.length<val)el.ep.menuNames.push('메뉴 '+(el.ep.menuNames.length+1));
+    if(el.ep.activeIndex>=val)el.ep.activeIndex=0;
+  }
+  if(extra==='adjustButtons'&&key==='buttonCount'){
+    while(el.ep.buttonTexts.length<val)el.ep.buttonTexts.push('버튼 '+(el.ep.buttonTexts.length+1));
+    while(el.ep.buttonStyles.length<val)el.ep.buttonStyles.push('primary');
+  }
+  renderCanvas();
+  renderProps();
+}
+
+function updateEPArray(arrKey,index,val,extraKey){
+  const el=canvasElements.find(e=>e.id===selectedEl);
+  if(!el||!el.ep)return;
+  el.ep[arrKey][index]=val;
+  renderCanvas();
+}
+
+function addEPItem(arrKey,prefix){
+  const el=canvasElements.find(e=>e.id===selectedEl);
+  if(!el||!el.ep)return;
+  el.ep[arrKey].push(prefix+' '+(el.ep[arrKey].length+1));
+  renderCanvas();
+  renderProps();
+}
+
+function removeEPItem(arrKey,index){
+  const el=canvasElements.find(e=>e.id===selectedEl);
+  if(!el||!el.ep)return;
+  el.ep[arrKey].splice(index,1);
+  renderCanvas();
+  renderProps();
+}
+
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function textInput(label,val,oninput,placeholder){
+  return `<div class="prop-group"><label class="prop-label">${label}</label><input class="prop-input" type="text" value="${esc(val)}" ${placeholder?`placeholder="${placeholder}"`:''} oninput="${oninput}"></div>`;
+}
+function numberInput(label,val,min,max,oninput){
+  return `<div class="prop-group"><label class="prop-label">${label}</label><input class="prop-input" type="number" value="${val}" ${min!=null?`min="${min}"`:''} ${max!=null?`max="${max}"`:''} oninput="${oninput}"></div>`;
+}
+function selectInput(label,opts,val,onchange){
+  return `<div class="prop-group"><label class="prop-label">${label}</label><select class="prop-select" onchange="${onchange}">${opts.map(o=>`<option value="${o.v}" ${o.v===val?'selected':''}>${o.l}</option>`).join('')}</select></div>`;
+}
+function rangeInput(label,val,min,max,oninput){
+  return `<div class="prop-group"><label class="prop-label">${label}: ${val}</label><div class="prop-range-row"><input class="prop-range" type="range" min="${min}" max="${max}" value="${val}" oninput="${oninput}"></div></div>`;
+}
+function boolInput(label,val,onchange){
+  // onchange uses VAL placeholder: "updateEP('key',VAL)"
+  return `<div class="prop-group"><label class="prop-label">${label}</label><div class="prop-bool-row"><div class="prop-bool-btn ${val==='yes'?'active':''}" onclick="${onchange.replace('VAL',"'yes'")}">예</div><div class="prop-bool-btn ${val==='no'?'active':''}" onclick="${onchange.replace('VAL',"'no'")}">아니오</div></div></div>`;
+}
+
+function optionListUI(label,arr,updateFn,addPrefix,extra){
+  return `<div class="prop-group"><label class="prop-label">${label}</label>${arr.map((t,i)=>`<div class="prop-option-row"><input type="text" value="${esc(t)}" oninput="${updateFn.replace('IDX',i)}" ${extra?extra(i):''}><div class="prop-option-remove" onclick="removeEPItem('${arr===selectedEl_ep().options?'options':''}',${i})">×</div></div>`).join('')}<button class="prop-option-add" onclick="addEPItem('${getArrKey(arr)}','${addPrefix}')">+ 추가</button></div>`;
+}
+
+// Helper to get array key name (not used directly - we build option lists inline)
+function getArrKey(arr){
+  const el=canvasElements.find(e=>e.id===selectedEl);
+  if(!el||!el.ep)return '';
+  for(const k in el.ep)if(el.ep[k]===arr)return k;
+  return '';
+}
+function selectedEl_ep(){const el=canvasElements.find(e=>e.id===selectedEl);return el?el.ep:{};}
+
+function renderElementSpecificProps(el){
+  if(!el.ep)return '';
+  const p=el.ep;
+  let html='<div class="props-divider"></div><div class="props-section-title"><span class="ico">⚙️</span> 요소별 설정</div>';
+  switch(el.typeId){
+    case 1:
+      html+=textInput('라벨 텍스트',p.labelText,`updateEP('labelText',this.value)`);
+      html+=boolInput('기본 체크',p.checkedDefault,`updateEP('checkedDefault',VAL)`);
+      break;
+    case 2:
+      html+=textInput('플레이스홀더',p.placeholder,`updateEP('placeholder',this.value)`);
+      html+=textInput('기본값',p.defaultValue,`updateEP('defaultValue',this.value)`);
+      break;
+    case 3:
+      html+=textInput('플레이스홀더',p.placeholder,`updateEP('placeholder',this.value)`);
+      html+=selectInput('줄 수',[{l:'3줄',v:3},{l:'4줄',v:4},{l:'5줄',v:5},{l:'6줄',v:6}],p.rows,`updateEP('rows',parseInt(this.value))`);
+      break;
+    case 4:
+      html+=`<div class="prop-group"><label class="prop-label">옵션 목록</label>${p.options.map((o,i)=>`<div class="prop-option-row"><input type="text" value="${esc(o)}" oninput="updateEPArray('options',${i},this.value)"><div class="prop-option-remove" onclick="removeEPItem('options',${i})">×</div></div>`).join('')}<button class="prop-option-add" onclick="addEPItem('options','옵션')">+ 옵션 추가</button></div>`;
+      html+=selectInput('선택된 옵션',p.options.map((o,i)=>({l:o,v:i})),p.selectedIndex,`updateEP('selectedIndex',parseInt(this.value))`);
+      break;
+    case 5:
+      html+=rangeInput('옵션 개수',p.optionCount,1,6,`updateEP('optionCount',parseInt(this.value),'adjustRadio')`);
+      html+=`<div class="prop-group"><label class="prop-label">각 옵션 텍스트</label>${p.optionTexts.map((t,i)=>`<div class="prop-option-row"><input type="text" value="${esc(t)}" oninput="updateEPArray('optionTexts',${i},this.value)"></div>`).join('')}</div>`;
+      html+=selectInput('기본 선택',p.optionTexts.map((t,i)=>({l:t,v:i})),p.selectedOption,`updateEP('selectedOption',parseInt(this.value))`);
+      break;
+    case 6:
+      html+=textInput('ON 라벨',p.onLabel,`updateEP('onLabel',this.value)`);
+      html+=textInput('OFF 라벨',p.offLabel,`updateEP('offLabel',this.value)`);
+      html+=`<div class="prop-group"><label class="prop-label">기본 상태</label><div class="prop-bool-row"><div class="prop-bool-btn ${p.defaultState==='on'?'active':''}" onclick="updateEP('defaultState','on')">ON</div><div class="prop-bool-btn ${p.defaultState==='off'?'active':''}" onclick="updateEP('defaultState','off')">OFF</div></div></div>`;
+      break;
+    case 7:
+      html+=numberInput('최소값',p.minVal,null,null,`updateEP('minVal',parseInt(this.value)||0)`);
+      html+=numberInput('최대값',p.maxVal,null,null,`updateEP('maxVal',parseInt(this.value)||100)`);
+      html+=rangeInput('현재값',p.currentVal,p.minVal,p.maxVal,`updateEP('currentVal',parseInt(this.value))`);
+      break;
+    case 8:
+      html+=textInput('플레이스홀더',p.placeholder,`updateEP('placeholder',this.value)`);
+      break;
+    case 9:
+      html+=rangeInput('버튼 개수',p.buttonCount,1,3,`updateEP('buttonCount',parseInt(this.value),'adjustButtons')`);
+      html+=`<div class="prop-group"><label class="prop-label">각 버튼 설정</label>${p.buttonTexts.map((t,i)=>`<div class="prop-option-row"><input type="text" value="${esc(t)}" oninput="updateEPArray('buttonTexts',${i},this.value)"><select onchange="updateEPArray('buttonStyles',${i},this.value)"><option value="primary" ${p.buttonStyles[i]==='primary'?'selected':''}>Primary</option><option value="secondary" ${p.buttonStyles[i]==='secondary'?'selected':''}>Secondary</option><option value="danger" ${p.buttonStyles[i]==='danger'?'selected':''}>Danger</option></select></div>`).join('')}</div>`;
+      break;
+    case 10:
+      html+=textInput('라벨 텍스트',p.labelText,`updateEP('labelText',this.value)`);
+      break;
+    case 11:
+      html+=rangeInput('항목 개수',p.itemCount,1,10,`updateEP('itemCount',parseInt(this.value),'adjustItems')`);
+      html+=`<div class="prop-group"><label class="prop-label">각 항목 텍스트</label>${p.itemTexts.map((t,i)=>`<div class="prop-option-row"><input type="text" value="${esc(t)}" oninput="updateEPArray('itemTexts',${i},this.value)"></div>`).join('')}</div>`;
+      break;
+    case 12:
+      html+=selectInput('컬럼 수',[{l:'2열',v:2},{l:'3열',v:3},{l:'4열',v:4}],p.columns,`updateEP('columns',parseInt(this.value))`);
+      html+=selectInput('항목 수',[{l:'3개',v:3},{l:'6개',v:6},{l:'9개',v:9},{l:'12개',v:12}],p.itemCount,`updateEP('itemCount',parseInt(this.value))`);
+      break;
+    case 13:
+      html+=textInput('컬럼 헤더 (콤마 구분)',p.headers,`updateEP('headers',this.value)`);
+      html+=rangeInput('행 개수',p.rowCount,1,10,`updateEP('rowCount',parseInt(this.value))`);
+      html+=`<div class="prop-group"><label class="prop-label">셀 데이터 (한 줄=한 행, 콤마 구분)</label><textarea class="prop-input" style="min-height:80px;font-size:13px;resize:vertical;" oninput="updateEP('cellData',this.value)">${esc(p.cellData)}</textarea></div>`;
+      break;
+    case 14:
+      html+=textInput('카드 제목',p.cardTitle,`updateEP('cardTitle',this.value)`);
+      html+=textInput('카드 설명',p.cardDesc,`updateEP('cardDesc',this.value)`);
+      html+=`<div class="prop-group"><label class="prop-label">이미지 영역 색상</label><div class="prop-color-row">${colorPresets.map(c=>`<div class="prop-color-swatch ${p.imageColor===c?'active':''}" style="background:${c}" onclick="updateEP('imageColor','${c}')"></div>`).join('')}</div></div>`;
+      break;
+    case 15:
+      html+=rangeInput('탭 개수',p.tabCount,2,5,`updateEP('tabCount',parseInt(this.value),'adjustTabs')`);
+      html+=`<div class="prop-group"><label class="prop-label">각 탭 이름</label>${p.tabNames.map((t,i)=>`<div class="prop-option-row"><input type="text" value="${esc(t)}" oninput="updateEPArray('tabNames',${i},this.value)"></div>`).join('')}</div>`;
+      html+=selectInput('활성 탭',p.tabNames.map((t,i)=>({l:t,v:i})),p.activeTab,`updateEP('activeTab',parseInt(this.value))`);
+      break;
+    case 16:
+      html+=textInput('모달 제목',p.modalTitle,`updateEP('modalTitle',this.value)`);
+      html+=textInput('모달 설명',p.modalDesc,`updateEP('modalDesc',this.value)`);
+      html+=textInput('버튼 텍스트',p.buttonText,`updateEP('buttonText',this.value)`);
+      break;
+    case 17:
+      html+=textInput('메시지',p.message,`updateEP('message',this.value)`);
+      html+=selectInput('토스트 타입',[{l:'성공 (초록)',v:'success'},{l:'오류 (빨강)',v:'error'},{l:'정보 (파랑)',v:'info'}],p.toastType,`updateEP('toastType',this.value)`);
+      break;
+    case 18:
+      html+=textInput('배지 텍스트',p.badgeText,`updateEP('badgeText',this.value)`);
+      html+=selectInput('배지 색상',[{l:'파랑',v:'blue'},{l:'초록',v:'green'},{l:'빨강',v:'red'},{l:'노랑',v:'yellow'},{l:'보라',v:'purple'}],p.badgeColor,`updateEP('badgeColor',this.value)`);
+      break;
+    case 19:
+      html+=numberInput('현재 페이지',p.currentPage,1,null,`updateEP('currentPage',parseInt(this.value)||1)`);
+      html+=numberInput('전체 페이지',p.totalPages,1,null,`updateEP('totalPages',parseInt(this.value)||1)`);
+      break;
+    case 20:
+      html+=rangeInput('항목 개수',p.itemCount,1,5,`updateEP('itemCount',parseInt(this.value),'adjustTitles')`);
+      html+=`<div class="prop-group"><label class="prop-label">각 항목 제목</label>${p.itemTitles.map((t,i)=>`<div class="prop-option-row"><input type="text" value="${esc(t)}" oninput="updateEPArray('itemTitles',${i},this.value)"></div>`).join('')}</div>`;
+      html+=selectInput('기본 펼침',[{l:'첫 번째',v:'first'},{l:'모두 닫힘',v:'none'},{l:'모두 펼침',v:'all'}],p.expandedDefault,`updateEP('expandedDefault',this.value)`);
+      break;
+    case 21:
+      html+=`<div class="prop-group"><label class="prop-label">기본 색상</label><div class="prop-color-row">${colorPresets.map(c=>`<div class="prop-color-swatch ${p.defaultColor===c?'active':''}" style="background:${c}" onclick="updateEP('defaultColor','${c}')"></div>`).join('')}</div></div>`;
+      break;
+    case 22:
+      html+=textInput('안내 문구',p.instruction,`updateEP('instruction',this.value)`);
+      break;
+    case 23:
+      html+=numberInput('최소값',p.minVal,null,null,`updateEP('minVal',parseInt(this.value)||0)`);
+      html+=numberInput('최대값',p.maxVal,null,null,`updateEP('maxVal',parseInt(this.value)||99)`);
+      html+=numberInput('현재값',p.currentVal,null,null,`updateEP('currentVal',parseInt(this.value)||0)`);
+      html+=numberInput('증감폭 (step)',p.step,1,null,`updateEP('step',parseInt(this.value)||1)`);
+      break;
+    case 24:
+      html+=textInput('플레이스홀더',p.placeholder,`updateEP('placeholder',this.value)`);
+      html+=boolInput('토글 버튼 표시',p.showToggle,`updateEP('showToggle',VAL)`);
+      break;
+    case 25:
+      html+=rangeInput('전체 단계',p.totalSteps,2,6,`updateEP('totalSteps',parseInt(this.value))`);
+      html+=rangeInput('현재 단계',p.currentStep,1,p.totalSteps,`updateEP('currentStep',parseInt(this.value))`);
+      break;
+    case 26:
+      html+=rangeInput('버튼 개수',p.buttonCount,2,4,`updateEP('buttonCount',parseInt(this.value),'adjustButtons')`);
+      html+=`<div class="prop-group"><label class="prop-label">각 버튼 텍스트</label>${p.buttonTexts.map((t,i)=>`<div class="prop-option-row"><input type="text" value="${esc(t)}" oninput="updateEPArray('buttonTexts',${i},this.value)"></div>`).join('')}</div>`;
+      html+=selectInput('활성 버튼',p.buttonTexts.map((t,i)=>({l:t,v:i})),p.activeIndex,`updateEP('activeIndex',parseInt(this.value))`);
+      break;
+    case 27:
+      html+=textInput('아이콘',p.icon,`updateEP('icon',this.value)`,`예: +, ✏️, 📩`);
+      break;
+    case 28:
+      html+=selectInput('최대 별 개수',[{l:'3개',v:3},{l:'5개',v:5},{l:'10개',v:10}],p.maxStars,`updateEP('maxStars',parseInt(this.value))`);
+      html+=rangeInput('현재 평점',p.currentRating,0,p.maxStars,`updateEP('currentRating',parseInt(this.value))`);
+      break;
+    case 29:
+      html+=selectInput('자릿수',[{l:'4자리',v:4},{l:'6자리',v:6},{l:'8자리',v:8}],p.digits,`updateEP('digits',parseInt(this.value))`);
+      break;
+    case 30:
+      html+=textInput('플레이스홀더',p.placeholder,`updateEP('placeholder',this.value)`);
+      break;
+    case 31:
+      html+=rangeInput('진행률',p.progress,0,100,`updateEP('progress',parseInt(this.value))`);
+      break;
+    case 32:
+      html+=textInput('대상 텍스트',p.targetText,`updateEP('targetText',this.value)`);
+      html+=textInput('툴팁 텍스트',p.tooltipText,`updateEP('tooltipText',this.value)`);
+      break;
+    case 33:
+      html+=rangeInput('메뉴 개수',p.menuCount,2,6,`updateEP('menuCount',parseInt(this.value),'adjustMenu')`);
+      html+=`<div class="prop-group"><label class="prop-label">각 메뉴 이름</label>${p.menuNames.map((t,i)=>`<div class="prop-option-row"><input type="text" value="${esc(t)}" oninput="updateEPArray('menuNames',${i},this.value)"></div>`).join('')}</div>`;
+      html+=selectInput('활성 메뉴',p.menuNames.map((t,i)=>({l:t,v:i})),p.activeIndex,`updateEP('activeIndex',parseInt(this.value))`);
+      break;
+    case 34:
+      html+=textInput('로고 텍스트',p.logoText,`updateEP('logoText',this.value)`);
+      html+=rangeInput('메뉴 링크 수',p.menuCount,2,5,`updateEP('menuCount',parseInt(this.value),'adjustMenu')`);
+      html+=`<div class="prop-group"><label class="prop-label">각 메뉴 이름</label>${p.menuNames.map((t,i)=>`<div class="prop-option-row"><input type="text" value="${esc(t)}" oninput="updateEPArray('menuNames',${i},this.value)"></div>`).join('')}</div>`;
+      break;
+    case 35:
+      html+=textInput('경로 항목 (콤마 구분)',p.pathItems,`updateEP('pathItems',this.value)`,`홈, 설정, 프로필`);
+      break;
+    case 36:
+      html+=textInput('이니셜 (1-2글자)',p.initial,`updateEP('initial',this.value)`);
+      html+=textInput('이름',p.name,`updateEP('name',this.value)`);
+      html+=textInput('역할',p.role,`updateEP('role',this.value)`);
+      break;
+    case 37:
+      html+=rangeInput('인원 수',p.peopleCount,2,8,`updateEP('peopleCount',parseInt(this.value))`);
+      html+=boolInput('카운트 배지 표시',p.showCount,`updateEP('showCount',VAL)`);
+      break;
+    case 38:
+      html+=rangeInput('슬라이드 수',p.slideCount,2,5,`updateEP('slideCount',parseInt(this.value))`);
+      break;
+    case 39:
+      html+=rangeInput('이벤트 수',p.eventCount,2,5,`updateEP('eventCount',parseInt(this.value),'adjustEvents')`);
+      html+=`<div class="prop-group"><label class="prop-label">이벤트 제목</label>${p.eventTitles.map((t,i)=>`<div class="prop-option-row"><input type="text" value="${esc(t)}" oninput="updateEPArray('eventTitles',${i},this.value)"></div>`).join('')}</div>`;
+      html+=`<div class="prop-group"><label class="prop-label">이벤트 날짜</label>${p.eventDates.map((t,i)=>`<div class="prop-option-row"><input type="text" value="${esc(t)}" oninput="updateEPArray('eventDates',${i},this.value)"></div>`).join('')}</div>`;
+      break;
+    case 40:
+      html+=textInput('아이콘',p.icon,`updateEP('icon',this.value)`,`예: 📭, 🔍, 📁`);
+      html+=textInput('제목',p.titleText,`updateEP('titleText',this.value)`);
+      html+=textInput('설명',p.descText,`updateEP('descText',this.value)`);
+      html+=textInput('버튼 텍스트',p.buttonText,`updateEP('buttonText',this.value)`);
+      break;
+  }
+  return html;
 }
 
 // Drag on canvas
@@ -611,6 +1109,55 @@ function clearCanvas(){
 }
 
 // ===== PROMPT GENERATION =====
+function generateElementSpecificPrompt(el){
+  if(!el.ep)return '';
+  const p=el.ep;
+  let s='';
+  switch(el.typeId){
+    case 1:s+=`  - 라벨: "${p.labelText}", 기본 체크: ${p.checkedDefault==='yes'?'체크됨':'체크 안됨'}\n`;break;
+    case 2:s+=`  - 플레이스홀더: "${p.placeholder}", 기본값: "${p.defaultValue}"\n`;break;
+    case 3:s+=`  - 플레이스홀더: "${p.placeholder}", 줄 수: ${p.rows}줄\n`;break;
+    case 4:s+=`  - 옵션 목록: ${p.options.map(o=>`'${o}'`).join(', ')}, 선택된 옵션: '${p.options[p.selectedIndex]||p.options[0]}'\n`;break;
+    case 5:s+=`  - 옵션 ${p.optionCount}개: ${p.optionTexts.slice(0,p.optionCount).map(o=>`'${o}'`).join(', ')}, 기본 선택: '${p.optionTexts[p.selectedOption]||''}'\n`;break;
+    case 6:s+=`  - ON 라벨: "${p.onLabel}", OFF 라벨: "${p.offLabel}", 기본 상태: ${p.defaultState==='on'?'ON':'OFF'}\n`;break;
+    case 7:s+=`  - 최소값: ${p.minVal}, 최대값: ${p.maxVal}, 현재값: ${p.currentVal}\n`;break;
+    case 8:s+=`  - 플레이스홀더: "${p.placeholder}"\n`;break;
+    case 9:s+=`  - 버튼 ${p.buttonCount}개: ${p.buttonTexts.slice(0,p.buttonCount).map((t,i)=>`'${t}'(${p.buttonStyles[i]||'primary'})`).join(', ')}\n`;break;
+    case 10:s+=`  - 라벨: "${p.labelText}"\n`;break;
+    case 11:s+=`  - 항목 ${p.itemCount}개: ${p.itemTexts.slice(0,p.itemCount).map(t=>`'${t}'`).join(', ')}\n`;break;
+    case 12:s+=`  - 컬럼 수: ${p.columns}열, 항목 수: ${p.itemCount}개\n`;break;
+    case 13:s+=`  - 컬럼 헤더: ${p.headers}, 행 수: ${p.rowCount}행\n  - 셀 데이터: ${p.cellData.replace(/\n/g,' | ')}\n`;break;
+    case 14:s+=`  - 카드 제목: "${p.cardTitle}", 설명: "${p.cardDesc}", 이미지 색상: ${p.imageColor}\n`;break;
+    case 15:s+=`  - 탭 ${p.tabCount}개: ${p.tabNames.slice(0,p.tabCount).map(t=>`'${t}'`).join(', ')}, 활성 탭: '${p.tabNames[p.activeTab]||''}'\n`;break;
+    case 16:s+=`  - 모달 제목: "${p.modalTitle}", 설명: "${p.modalDesc}", 버튼: "${p.buttonText}"\n`;break;
+    case 17:s+=`  - 메시지: "${p.message}", 타입: ${p.toastType}\n`;break;
+    case 18:s+=`  - 배지 텍스트: "${p.badgeText}", 색상: ${p.badgeColor}\n`;break;
+    case 19:s+=`  - 현재 페이지: ${p.currentPage}, 전체 페이지: ${p.totalPages}\n`;break;
+    case 20:s+=`  - 항목 ${p.itemCount}개: ${p.itemTitles.slice(0,p.itemCount).map(t=>`'${t}'`).join(', ')}, 기본 펼침: ${p.expandedDefault}\n`;break;
+    case 21:s+=`  - 기본 색상: ${p.defaultColor}\n`;break;
+    case 22:s+=`  - 안내 문구: "${p.instruction}"\n`;break;
+    case 23:s+=`  - 최소값: ${p.minVal}, 최대값: ${p.maxVal}, 현재값: ${p.currentVal}, 증감폭: ${p.step}\n`;break;
+    case 24:s+=`  - 플레이스홀더: "${p.placeholder}", 토글 버튼: ${p.showToggle==='yes'?'표시':'숨김'}\n`;break;
+    case 25:s+=`  - 전체 단계: ${p.totalSteps}, 현재 단계: ${p.currentStep}\n`;break;
+    case 26:s+=`  - 버튼 ${p.buttonCount}개: ${p.buttonTexts.slice(0,p.buttonCount).map(t=>`'${t}'`).join(', ')}, 활성: '${p.buttonTexts[p.activeIndex]||''}'\n`;break;
+    case 27:s+=`  - 아이콘: "${p.icon}"\n`;break;
+    case 28:s+=`  - 최대 별: ${p.maxStars}개, 현재 평점: ${p.currentRating}\n`;break;
+    case 29:s+=`  - 자릿수: ${p.digits}자리\n`;break;
+    case 30:s+=`  - 플레이스홀더: "${p.placeholder}"\n`;break;
+    case 31:s+=`  - 진행률: ${p.progress}%\n`;break;
+    case 32:s+=`  - 대상 텍스트: "${p.targetText}", 툴팁: "${p.tooltipText}"\n`;break;
+    case 33:s+=`  - 메뉴 ${p.menuCount}개: ${p.menuNames.slice(0,p.menuCount).map(t=>`'${t}'`).join(', ')}, 활성: '${p.menuNames[p.activeIndex]||''}'\n`;break;
+    case 34:s+=`  - 로고: "${p.logoText}", 메뉴 ${p.menuCount}개: ${p.menuNames.slice(0,p.menuCount).map(t=>`'${t}'`).join(', ')}\n`;break;
+    case 35:s+=`  - 경로: ${p.pathItems}\n`;break;
+    case 36:s+=`  - 이니셜: "${p.initial}", 이름: "${p.name}", 역할: "${p.role}"\n`;break;
+    case 37:s+=`  - 인원: ${p.peopleCount}명, 카운트 배지: ${p.showCount==='yes'?'표시':'숨김'}\n`;break;
+    case 38:s+=`  - 슬라이드 ${p.slideCount}개\n`;break;
+    case 39:s+=`  - 이벤트 ${p.eventCount}개: ${p.eventTitles.slice(0,p.eventCount).map((t,i)=>`'${t}'(${p.eventDates[i]||''})`).join(', ')}\n`;break;
+    case 40:s+=`  - 아이콘: "${p.icon}", 제목: "${p.titleText}", 설명: "${p.descText}", 버튼: "${p.buttonText}"\n`;break;
+  }
+  return s;
+}
+
 function generatePrompt(){
   if(!canvasElements.length){
     alert('캔버스에 요소를 먼저 배치하세요!');
@@ -634,6 +1181,9 @@ function generatePrompt(){
     prompt+=`  - 정렬: ${alignMap[el.align]||'가운데'}\n`;
     if(el.customText)prompt+=`  - 표시 텍스트: "${el.customText}"\n`;
     if(el.typeId===9||el.typeId===27)prompt+=`  - 배경색: ${el.color}, 글자색: 흰색\n`;
+    // Element-specific details
+    const epText=generateElementSpecificPrompt(el);
+    if(epText)prompt+=epText;
     prompt+='\n';
   });
 
